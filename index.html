@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tacosuke Works Catalog</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="age-check" class="overlay">
+    <div class="modal">
+      <h2>⚠️18歳未満の方はご退出ください</h2>
+      <p>このサイトにはアダルトコンテンツを含みます。</p>
+      <button id="enter-btn">はい、18歳以上です</button>
+    </div>
+  </div>
+
+  <header>
+    <h1>Tacosuke Works Catalog</h1>
+  </header>
+
+  <main>
+    <div id="works-container" class="grid"></div>
+  </main>
+
+  <footer>
+    <p>© 2025 Tacosuke</p>
+  </footer>
+
+  <script>
+    // 年齢確認
+    const overlay = document.getElementById('age-check');
+    document.getElementById('enter-btn').onclick = () => {
+      overlay.style.display = 'none';
+    };
+
+    // CSVを読み込んでカード生成
+    async function loadWorks() {
+      const response = await fetch('works.csv');
+      const data = await response.text();
+      const rows = data.split('\n').slice(1); // ヘッダー除外
+
+      const container = document.getElementById('works-container');
+      rows.forEach(row => {
+        const [title, desc, img, fanza, dlsite, booth, pictspace] = row.split(',');
+
+        if (!title) return;
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <img src="${img}" alt="${title}">
+          <h2>${title}</h2>
+          <p>${desc}</p>
+          <div class="links">
+            ${fanza ? `<a href="${fanza}" target="_blank" class="btn fanza">FANZA</a>` : ''}
+            ${dlsite ? `<a href="${dlsite}" target="_blank" class="btn dlsite">DLsite</a>` : ''}
+            ${booth ? `<a href="${booth}" target="_blank" class="btn booth">BOOTH</a>` : ''}
+            ${pictspace ? `<a href="${pictspace}" target="_blank" class="btn pictspace">pictSPACE</a>` : ''}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    loadWorks();
+  </script>
+</body>
+</html>
