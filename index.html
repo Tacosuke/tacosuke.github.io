@@ -17,6 +17,16 @@
 
   <header>
     <h1>Tacosuke Works Catalog</h1>
+
+    <!-- ▼ フィルタUI -->
+    <div id="filters">
+      <select id="category-filter">
+        <option value="">すべてのカテゴリ</option>
+      </select>
+      <select id="series-filter">
+        <option value="">すべてのシリーズ</option>
+      </select>
+    </div>
   </header>
 
   <main>
@@ -30,36 +40,26 @@
   <script>
     // 年齢確認
     const overlay = document.getElementById('age-check');
-    document.getElementById('enter-btn').onclick = () => {
-      overlay.style.display = 'none';
-    };
+    document.getElementById('enter-btn').onclick = () => overlay.style.display = 'none';
 
-    // CSVパース用（"..."や改行を安全に処理）
     function parseCSV(text) {
       const rows = [];
-      let current = [];
-      let inQuotes = false;
-      let value = '';
-
+      let current = [], inQuotes = false, value = '';
       for (let i = 0; i < text.length; i++) {
-        const char = text[i];
-        if (char === '"') {
-          if (inQuotes && text[i + 1] === '"') {
-            value += '"';
-            i++;
-          } else {
-            inQuotes = !inQuotes;
-          }
-        } else if (char === ',' && !inQuotes) {
+        const c = text[i];
+        if (c === '"') {
+          if (inQuotes && text[i + 1] === '"') { value += '"'; i++; }
+          else inQuotes = !inQuotes;
+        } else if (c === ',' && !inQuotes) {
           current.push(value.trim());
           value = '';
-        } else if (char === '\n' && !inQuotes) {
+        } else if (c === '\n' && !inQuotes) {
           current.push(value.trim());
           rows.push(current);
           current = [];
           value = '';
         } else {
-          value += char;
+          value += c;
         }
       }
       if (value) current.push(value.trim());
@@ -67,33 +67,63 @@
       return rows;
     }
 
+    let allWorks = [];
+
     async function loadWorks() {
       const response = await fetch('https://docs.google.com/spreadsheets/d/1v0t7jK3EiajQtn2DC5Vl0MaxS2pXNBeFma63iSCGR0k/gviz/tq?tqx=out:csv');
       const data = await response.text();
       const rows = parseCSV(data);
-      const header = rows.shift(); // ヘッダー除外
+      const header = rows.shift();
 
       const container = document.getElementById('works-container');
-      rows.forEach(cols => {
-        if (!cols.length || !cols[0]) return;
+      const categorySet = new Set();
+      const seriesSet = new Set();
 
-        const [title, desc, img, fanza, dlsite, booth, pictspace] = cols.map(v => v.replace(/^"|"$/g, ''));
-
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <img src="${img}" alt="${title}">
-          <h2>${title}</h2>
-          <p>${desc}</p>
-          <div class="links">
-            ${fanza ? `<a href="${fanza}" target="_blank" class="btn fanza">FANZA</a>` : ''}
-            ${dlsite ? `<a href="${dlsite}" target="_blank" class="btn dlsite">DLsite</a>` : ''}
-            ${booth ? `<a href="${booth}" target="_blank" class="btn booth">BOOTH</a>` : ''}
-            ${pictspace ? `<a href="${pictspace}" target="_blank" class="btn pictspace">pictSPACE</a>` : ''}
-          </div>
-        `;
-        container.appendChild(card);
+      allWorks = rows.map(cols => {
+        const [title, desc, img, fanza, dlsite, booth, pictspace, category, series] = cols.map(v => v.replace(/^"|"$/g, ''));
+        if (category) categorySet.add(category);
+        if (series) seriesSet.add(series);
+        return { title, desc, img, fanza, dlsite, booth, pictspace, category, series };
       });
+
+      // フィルタの選択肢を作成
+      const categoryFilter = document.getElementById('category-filter');
+      categorySet.forEach(c => categoryFilter.innerHTML += `<option value="${c}">${c}</option>`);
+
+      const seriesFilter = document.getElementById('series-filter');
+      seriesSet.forEach(s => seriesFilter.innerHTML += `<option value="${s}">${s}</option>`);
+
+      // フィルタ操作
+      categoryFilter.addEventListener('change', renderFiltered);
+      seriesFilter.addEventListener('change', renderFiltered);
+
+      renderFiltered();
+    }
+
+    function renderFiltered() {
+      const category = document.getElementById('category-filter').value;
+      const series = document.getElementById('series-filter').value;
+      const container = document.getElementById('works-container');
+      container.innerHTML = '';
+
+      allWorks
+        .filter(w => (!category || w.category === category) && (!series || w.series === series))
+        .forEach(w => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <img src="${w.img}" alt="${w.title}">
+            <h2>${w.title}</h2>
+            <p>${w.desc}</p>
+            <div class="links">
+              ${w.fanza ? `<a href="${w.fanza}" target="_blank" class="btn fanza">FANZA</a>` : ''}
+              ${w.dlsite ? `<a href="${w.dlsite}" target="_blank" class="btn dlsite">DLsite</a>` : ''}
+              ${w.booth ? `<a href="${w.booth}" target="_blank" class="btn booth">BOOTH</a>` : ''}
+              ${w.pictspace ? `<a href="${w.pictspace}" target="_blank" class="btn pictspace">pictSPACE</a>` : ''}
+            </div>
+          `;
+          container.appendChild(card);
+        });
     }
 
     loadWorks();
