@@ -1,101 +1,132 @@
+/* ======= 基本設定 ======= */
 body {
   font-family: "Noto Sans JP", sans-serif;
-  background: #111;
-  color: #eee;
   margin: 0;
-  padding: 0;
+  background: #1a1a1a;
+  color: #f5f5f5;
+  line-height: 1.6;
 }
 
 header {
   text-align: center;
-  padding: 1.5em;
   background: #222;
-  border-bottom: 1px solid #333;
+  padding: 1.5em 1em 1em;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-h1 {
-  font-size: 1.8em;
+header h1 {
+  margin: 0 0 0.8em;
+  font-size: 1.6em;
+  color: #ff4081;
+}
+
+/* ======= フィルタエリア ======= */
+#filters {
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+  flex-wrap: wrap;
+}
+
+#filters select {
+  background: #333;
   color: #fff;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 0.5em 1em;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
+#filters select:hover {
+  background: #444;
+}
+
+/* ======= グリッド表示 ======= */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1em;
-  padding: 1em;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5em;
+  padding: 2em;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
+/* ======= カードデザイン ======= */
 .card {
-  background: #1c1c1c;
+  background: #2a2a2a;
   border-radius: 12px;
-  padding: 1em;
-  text-align: center;
-  box-shadow: 0 0 10px #000;
-  transition: transform 0.2s;
+  overflow: hidden;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
 }
 
 .card img {
   width: 100%;
-  border-radius: 8px;
+  height: 220px;
   object-fit: cover;
+  display: block;
 }
 
 .card h2 {
+  margin: 0.6em 0 0.4em;
   font-size: 1.1em;
-  margin: 0.5em 0;
+  color: #ffb6c1;
+  text-align: center;
 }
 
 .card p {
   font-size: 0.9em;
-  color: #ccc;
-  min-height: 3em;
+  padding: 0 1em;
+  color: #ddd;
+  text-align: center;
 }
 
+/* ======= リンクボタン ======= */
 .links {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.4em;
-  margin-top: 0.8em;
+  padding: 1em 0 1.4em;
 }
 
-.btn {
+.links a {
   padding: 0.4em 0.8em;
   border-radius: 6px;
-  text-decoration: none;
-  color: white;
   font-size: 0.85em;
-  font-weight: bold;
+  text-decoration: none;
+  color: #fff;
+  transition: 0.2s;
+}
+
+.links a:hover {
+  opacity: 0.85;
 }
 
 .btn.fanza { background: #e60033; }
-.btn.dlsite { background: #007bff; }
-.btn.booth { background: #ff6699; }
-.btn.pictspace { background: #33cc99; }
+.btn.dlsite { background: #0084ff; }
+.btn.booth { background: #ff5588; }
+.btn.pictspace { background: #ffa500; }
 
-footer {
-  text-align: center;
-  padding: 1em;
-  font-size: 0.8em;
-  color: #888;
-  background: #111;
-  border-top: 1px solid #222;
-}
-
-/* 年齢確認オーバーレイ */
+/* ======= 年齢確認モーダル ======= */
 .overlay {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.9);
-  color: #fff;
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 9999;
+  align-items: center;
+  z-index: 1000;
 }
 
 .modal {
@@ -103,19 +134,36 @@ footer {
   padding: 2em;
   border-radius: 12px;
   text-align: center;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 0 20px rgba(255, 64, 129, 0.4);
 }
 
 .modal h2 {
-  margin-bottom: 0.5em;
+  color: #ff4081;
+  margin-bottom: 0.8em;
 }
 
 .modal button {
-  margin-top: 1em;
-  background: #e60033;
+  background: #ff4081;
   color: #fff;
   border: none;
-  padding: 0.6em 1.2em;
   border-radius: 6px;
+  padding: 0.6em 1.2em;
   font-size: 1em;
   cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal button:hover {
+  background: #ff5f9d;
+}
+
+/* ======= フッター ======= */
+footer {
+  text-align: center;
+  padding: 1em;
+  background: #111;
+  font-size: 0.8em;
+  color: #aaa;
 }
