@@ -5,7 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tacosuke Works Catalog</title>
   <link rel="stylesheet" href="style.css" />
+
+  <!-- ▼▼ Cloudflare Web Analytics（あなたの token に置き換えてください） ▼▼ -->
+  <!-- Cloudflare のサイトで発行されたタグをここに貼る -->
+  <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c4515e2759544c0cb80bd25e19cd1f2f"}'></script><!-- End Cloudflare Web Analytics -->
+  <!-- ▲▲ Cloudflare Web Analytics ▲▲ -->
 </head>
+
 <body>
   <div id="age-check" class="overlay">
     <div class="modal">
@@ -42,6 +48,7 @@
     const overlay = document.getElementById('age-check');
     document.getElementById('enter-btn').onclick = () => overlay.style.display = 'none';
 
+    // CSVパーサー
     function parseCSV(text) {
       const rows = [];
       let current = [], inQuotes = false, value = '';
@@ -75,31 +82,40 @@
       const rows = parseCSV(data);
       const header = rows.shift();
 
-      const container = document.getElementById('works-container');
       const categorySet = new Set();
       const seriesSet = new Set();
 
       allWorks = rows.map(cols => {
-        const [title, desc, img, fanza, dlsite, booth, pictspace, category, series] = cols.map(v => v.replace(/^"|"$/g, ''));
+        const [
+          title, desc, img,
+          fanza, dlsite, booth, pictspace,
+          category, series
+        ] = cols.map(v => v.replace(/^"|"$/g, ''));
+
         if (category) categorySet.add(category);
         if (series) seriesSet.add(series);
+
         return { title, desc, img, fanza, dlsite, booth, pictspace, category, series };
       });
 
-      // フィルタの選択肢を作成
+      // ▼ セレクトボックス作成
       const categoryFilter = document.getElementById('category-filter');
-      categorySet.forEach(c => categoryFilter.innerHTML += `<option value="${c}">${c}</option>`);
+      categorySet.forEach(c => {
+        categoryFilter.innerHTML += `<option value="${c}">${c}</option>`;
+      });
 
       const seriesFilter = document.getElementById('series-filter');
-      seriesSet.forEach(s => seriesFilter.innerHTML += `<option value="${s}">${s}</option>`);
+      seriesSet.forEach(s => {
+        seriesFilter.innerHTML += `<option value="${s}">${s}</option>`;
+      });
 
-      // フィルタ操作
       categoryFilter.addEventListener('change', renderFiltered);
       seriesFilter.addEventListener('change', renderFiltered);
 
       renderFiltered();
     }
 
+    // ▼ フィルタ表示
     function renderFiltered() {
       const category = document.getElementById('category-filter').value;
       const series = document.getElementById('series-filter').value;
@@ -107,7 +123,10 @@
       container.innerHTML = '';
 
       allWorks
-        .filter(w => (!category || w.category === category) && (!series || w.series === series))
+        .filter(w =>
+          (!category || w.category === category) &&
+          (!series || w.series === series)
+        )
         .forEach(w => {
           const card = document.createElement('div');
           card.className = 'card';
