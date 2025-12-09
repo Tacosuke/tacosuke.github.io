@@ -6,10 +6,9 @@
   <title>Tacosuke Works Catalog</title>
   <link rel="stylesheet" href="style.css" />
 
-  <!-- ▼▼ Cloudflare Web Analytics（あなたの token に置き換えてください） ▼▼ -->
-  <!-- Cloudflare のサイトで発行されたタグをここに貼る -->
-  <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c4515e2759544c0cb80bd25e19cd1f2f"}'></script><!-- End Cloudflare Web Analytics -->
-  <!-- ▲▲ Cloudflare Web Analytics ▲▲ -->
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+    data-cf-beacon='{"token": "c4515e2759544c0cb80bd25e19cd1f2f"}'></script>
 </head>
 
 <body>
@@ -26,9 +25,12 @@
 
     <!-- ▼ フィルタUI -->
     <div id="filters">
+      <input type="text" id="search-box" placeholder="キーワード検索（タイトル・説明）">
+
       <select id="category-filter">
         <option value="">すべてのカテゴリ</option>
       </select>
+
       <select id="series-filter">
         <option value="">すべてのシリーズ</option>
       </select>
@@ -111,21 +113,29 @@
 
       categoryFilter.addEventListener('change', renderFiltered);
       seriesFilter.addEventListener('change', renderFiltered);
+      document.getElementById('search-box').addEventListener('input', renderFiltered);
 
       renderFiltered();
     }
 
-    // ▼ フィルタ表示
+    // ▼ フィルタ + 検索
     function renderFiltered() {
       const category = document.getElementById('category-filter').value;
       const series = document.getElementById('series-filter').value;
+      const keyword = document.getElementById('search-box').value.toLowerCase();
       const container = document.getElementById('works-container');
       container.innerHTML = '';
 
       allWorks
         .filter(w =>
           (!category || w.category === category) &&
-          (!series || w.series === series)
+          (!series || w.series === series) &&
+          (
+            w.title.toLowerCase().includes(keyword) ||
+            w.desc.toLowerCase().includes(keyword) ||
+            (w.series && w.series.toLowerCase().includes(keyword)) ||
+            (w.category && w.category.toLowerCase().includes(keyword))
+          )
         )
         .forEach(w => {
           const card = document.createElement('div');
