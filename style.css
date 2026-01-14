@@ -167,3 +167,54 @@ footer {
   font-size: 0.8em;
   color: #aaa;
 }
+
+/* ===== ファーストビュー（hero） ===== */
+.hero {
+  max-width: 960px;        /* 横幅制限 */
+  margin: 40px auto;       /* 中央寄せ */
+  padding: 0 20px;         /* スマホ余白 */
+  text-align: center;      /* 文字中央 */
+}
+
+.hero h2 {
+  font-size: 1.8rem;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+
+.hero p {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.hero-actions {
+  display: flex;
+  justify-content: center; /* ボタン中央 */
+  gap: 16px;
+  flex-wrap: wrap;         /* スマホ対応 */
+}
+
+/* CTAボタン */
+.cta {
+  display: inline-block;
+  padding: 12px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.cta.primary {
+  background: #e53935;
+  color: #fff;
+}
+
+.cta.secondary {
+  background: #555;
+  color: #fff;
+}
+
+.cta:hover {
+  opacity: 0.85;
+}
+
